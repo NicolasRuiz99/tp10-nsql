@@ -1,12 +1,15 @@
+from bigchaindb_driver import BigchainDB
+from bigchaindb_driver.crypto import generate_keypair
 
+bdb = BigchainDB('https://test.ipdb.io')
 
-def connect_db():
-    conexion = redis.StrictRedis(port=6379, db=0, host="db-kylo-fr")
-    if(conexion.ping()):
-        print("conectado a redis")
-    else:
-        print("error de conexion con redis")
-    return conexion
+def crear_usuarios():
+    users = []
+    users.append (generate_keypair())
+    users.append (generate_keypair())
+    users.append (generate_keypair())
+    users.append (generate_keypair())
+    return users
 
 def get_list(nombre):
     db = connect_db()

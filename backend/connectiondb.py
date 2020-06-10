@@ -110,11 +110,67 @@ def cargar_armas ():
 
     return sent_creation_tx
 
-def get_assets (user):
-    res = []
-    assets = bdb.assets.get(search='Galactic Coin')
-    for a in assets:
-        res.append (bdb.transactions.get(asset_id=a['id']))
+def get_assets ():
+    asset = bdb.assets.get(search='Galactic Coin')[0]
+    res = bdb.transactions.get(asset_id=asset['id'])
     return res
+
+def get_user_coins (user):
+    coins = None
+    transaction_id = None
+    output_index = None
+    output = None
+    transactions = get_assets ()
+    for i in range(len(transactions)):
+        t = transactions[-i-1]
+        outputs = t["outputs"]        
+        for index,o in enumerate (outputs):
+            if user.public_key in o["condition"]["details"]["public_key"]:
+                coins = o["amount"]
+                output_index = index
+                break
+        if coins != None:
+            transaction_id = t["id"]
+            output = t["outputs"][output_index]
+            break
+    return [coins,transaction_id,output_index,output]
+
+def transfer_coins (user1,user2,coins,transaction_id,output,output_index):
+    transfer_input = {
+        'fulfillment': output['condition']['details'],
+        'fulfills': {
+        'output_index': output_index,
+        'transaction_id': transaction_id,
+    },
+        'owners_before': output['public_keys'],
+    }
+
+    transfer_asset = {
+        'id': transaction_id,
+    }
+
+    coins_left = int(output["amount"])- int (coins)
+    if (coins_left < 0):
+        prepared_transfer_tx = bdb.transactions.prepare(
+            operation='TRANSFER',
+            asset=transfer_asset,
+            inputs=transfer_input,
+            recipients=[([user2.public_key], int(coins)), ([user1.public_key], coins_left )]
+        )
+    else:
+        prepared_transfer_tx = bdb.transactions.prepare(
+            operation='TRANSFER',
+            asset=transfer_asset,
+            inputs=transfer_input,
+            recipients=[([user2.public_key], int(coins)), ([user1.public_key], coins_left )]
+        )
+    
+
+    fulfilled_transfer_tx = bdb.transactions.fulfill(prepared_transfer_tx, private_keys=user1.private_key)
+
+    bdb.transactions.send_commit(fulfilled_transfer_tx)
+
+    return fulfilled_transfer_tx
+
 
 

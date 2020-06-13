@@ -164,7 +164,6 @@ def transfer_coins (user1,user2,coins,transaction_id,output,output_index):
             inputs=transfer_input,
             recipients=[([user2.public_key], int(coins)), ([user1.public_key], coins_left )]
         )
-    
 
     fulfilled_transfer_tx = bdb.transactions.fulfill(prepared_transfer_tx, private_keys=user1.private_key)
 

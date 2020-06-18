@@ -117,9 +117,6 @@ def prueba ():
 
 def get_assets (user,coins):
     lista = []
-    #return bdb.assets.get(search='Galactic Coin')
-    #asset = bdb.assets.get(search='Galactic Coin')[0]
-    #res = bdb.transactions.get(asset_id='fca4807865ad68be36ba67956812dbb2fa0cf6c6ec94f568bbf87cf701609d91')
     res = bdb.outputs.get(user.public_key,False)
     for i in res:
         i["transaction"] = bdb.transactions.retrieve(txid=i["transaction_id"])
@@ -142,15 +139,17 @@ def get_user_weapons (user):
             id = i["transaction"]["asset"]["id"]
         
         amount = i["transaction"]["outputs"][i["output_index"]]["amount"]
-        asset = {"id":id,"data":data["data"],"amount":amount}
+        asset = {"id":id,"data":data["data"],"amount":int (amount)}
 
-        if asset not in result:
-            result.append (asset)
-        else:
-            for r in result:
-                if (r["id"] == asset["id"]):
-                    r["amount"] = r["amount"] + amount
-                    break
+        found = False
+        for r in result:
+            if (len(result) > 0) and (r["id"] == asset["id"]):
+                r["amount"] = int(r["amount"]) + int(amount)
+                found = True
+                break
+
+        if (found == False):
+            result.append(asset)
             
     return result
 
@@ -169,7 +168,7 @@ def transfer_coins (user1,user2,coins):
     coins_left = int(coins)
     i = 0
 
-    while coins_left != 0:
+    while coins_left != 0 and i < len(transactions):
         item = transactions[i]
         outputs = item["transaction"]["outputs"]
         output = outputs [item["output_index"]]

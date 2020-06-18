@@ -18,7 +18,7 @@ const WeaponList = ({ list, shop,user,buyWeapon }) => {
         </thead>
         <tbody>
             {list.map((item)=>(
-                <WeaponItem key={item.name} item={item} shop={shop} user = {user} buyWeapon={buyWeapon} />
+                <WeaponItem key={item.id} item={item} shop={shop} user = {user} buyWeapon={buyWeapon} />
             ))}
         </tbody>
         </table>

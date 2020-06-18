@@ -78,6 +78,19 @@ const transfer_coins = (name1, name2, coins) => {
         .catch(err => { throw err.response.data })
 }
 
+const transfer_weapon = (name1, name2, id_weapon) => {
+    return axios
+        .post("http://localhost:5000/transfer_weapon", {
+            name1,
+            name2,
+            id_weapon
+        })
+        .then(res => {
+            return res.data
+        })
+        .catch(err => { throw err.response.data })
+}
+
 const buy_weapon = (weapon, user, coins) => {
     return axios
         .post("http://localhost:5000/buy_weapon", {
@@ -99,5 +112,6 @@ export {
     get_user_coins,
     buy_weapon,
     get_user_weapons,
-    transfer_coins
+    transfer_coins,
+    transfer_weapon
 };

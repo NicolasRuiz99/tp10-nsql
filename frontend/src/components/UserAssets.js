@@ -11,33 +11,35 @@ const UserAssets = ({user}) => {
     const [transferCoins,setTransferCoins] = useState ("");
 
     useEffect (()=>{
-        if (user !== "Darth Vader"){
             setLoading (true);
             get_user_coins (user)
             .then (res=>{
                 setCoins (res.coins);
-                get_user_weapons (user)
-                .then (res=>{
-                    setWeapons (res);
+                if (user !== "Darth Vader"){
+                    get_user_weapons (user)
+                    .then (res=>{
+                        setWeapons (res);
+                        setLoading (false);
+                    })
+                    .catch (err=>{
+                        setLoading (false);
+                        alertError ();
+                    })
+                }else{
                     setLoading (false);
-                })
-                .catch (err=>{
-                    setLoading (false);
-                    alertError ();
-                })
+                }                
             })
             .catch (err=>{
                 setLoading (false);
                 alertError ();
-            })
-        }        
+            })       
     },[user])
 
     const transfer = () => {
         alertConfirm ()
         .then (res=>{
             if (res.value){
-                if (target === ""){
+                if ((target === "") || (transferCoins > coins) || (transferCoins <= 0)){
                     alertError ();
                     return;
                 }
@@ -51,30 +53,36 @@ const UserAssets = ({user}) => {
             }
         })
     }
-
     if (user === "Darth Vader"){
         return (
             <div>
-            <h1>Transferir Galactic Coins</h1>
-            <div class="form-group">
-                <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">$</span>
+                {(loading)?
+                <h2>Cargando...</h2>
+                :
+                <div>
+                <h1>Mis Galactic Coins: {coins}</h1>
+                <h1>Transferir Galactic Coins</h1>
+                <div class="form-group">
+                    <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                    </div>
+                    <input type="number" min="1" class="form-control" onChange={e=>setTransferCoins(e.target.value)}/>
+                    <div class="input-group-append">
+                        <select className="custom-select" onChange={e=>setTarget(e.target.value)} >
+                            <option value="">Seleccionar usuario</option>
+                            <option value="Boba Fett">Boba Fett</option>
+                            <option value="Greedo">Greedo</option>
+                            <option value="Din Djarin">Din Djarin</option>
+                        </select>
+                    </div>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-success" onClick={()=> transfer()}>Transferir</button>
+                    </div>
+                    </div>
                 </div>
-                <input type="number" min="1" class="form-control" onChange={e=>setTransferCoins(e.target.value)}/>
-                <div class="input-group-append">
-                    <select className="custom-select" onChange={e=>setTarget(e.target.value)} >
-                        <option value="">Seleccionar usuario</option>
-                        <option value="Boba Fett">Boba Fett</option>
-                        <option value="Greedo">Greedo</option>
-                        <option value="Din Djarin">Din Djarin</option>
-                    </select>
                 </div>
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-success" onClick={()=> transfer()}>Transferir</button>
-                </div>
-                </div>
-            </div>
+                }               
             </div>
         );
     }else{

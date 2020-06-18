@@ -5,12 +5,11 @@ import WeaponList from "./WeaponList";
 const UserAssets = ({user}) => {
 
     const [coins,setCoins] = useState ("");
-    const [weapons,setWeapons] = useState ([{name:'Sable de luz',cost:6},{name:'Blaster',cost:4}]);
+    const [weapons,setWeapons] = useState ([]);
     const [loading,setLoading] = useState (false);
     const [target,setTarget] = useState ("");
     const [transferCoins,setTransferCoins] = useState ("");
 
-    /*
     useEffect (()=>{
         if (user !== "Darth Vader"){
             setLoading (true);
@@ -33,7 +32,6 @@ const UserAssets = ({user}) => {
             })
         }        
     },[user])
-    */
 
     const transfer = () => {
         alertConfirm ()
@@ -82,9 +80,15 @@ const UserAssets = ({user}) => {
     }else{
         return (
             <div>
-                <h1>Mis Galactic Coins: {coins}</h1>
-                <h1>Mis armas</h1>
-                <WeaponList list={weapons} shop={false} user = {user}/>
+                {(loading)?
+                <h2>Cargando...</h2>
+                :
+                <div>
+                    <h1>Mis Galactic Coins: {coins}</h1>
+                    <h1>Mis armas</h1>
+                    <WeaponList list={weapons} shop={false} user = {user}/>
+                </div>
+                }
             </div>
         );
     }

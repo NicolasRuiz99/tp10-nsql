@@ -36,7 +36,7 @@ const alertConfirm = () => {
 
 const list_weapons = () => {
     return axios
-        .get("http://localhost:5000/list_weapons")
+        .post("http://localhost:5000/get_user_weapons", { name: "Darth Vader" })
         .then(res => {
             return res.data
         })

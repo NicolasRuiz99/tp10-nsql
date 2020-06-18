@@ -8,6 +8,7 @@ const WeaponList = ({ list, shop,user,buyWeapon }) => {
             <tr>
             <th scope="col">Arma</th>
             <th scope="col">Precio (Galactic Coins)</th>
+            <th scope="col">Cantidad</th>
             {(shop)?
             <th scope="col">Acción</th>
             :

@@ -1,21 +1,21 @@
 [{
         "name": "Darth Vader",
-        "private_key": "D935f2rPnkqaBWQhXg8L6DAfKtbHwdKidHzEMiW9vhXa",
-        "public_key": "CR67HfeHYtxMZSBq256XB9vEUYoc7MseCxyb7TT4yCJS"
+        "private_key": "GcxzmYxfDtubAA8BaR1bZziGkcQTakW5pXV7AtEvXCcb",
+        "public_key": "C5feJhsK8KzgdX8bPpXgB6byUNffpuvEEis9SpquFDpU"
     },
     {
         "name": "Boba Fett",
-        "private_key": "M2NVBykKudzLwtaL63TJRvDpTxHPkxZ7UQxQHScxiNq",
-        "public_key": "BvdoR61KfNEJSRb48bxKi145FwbcJdi9etyRE39P4N6s"
+        "private_key": "7ZvQXqfhGswLf62SK8Y6KJwBWZq6RDdt9QJbgePcCggF",
+        "public_key": "HWbhkm7kgRtVLzHUmcaNZLxMr9xByLxGUXUxjnN66dXr"
     },
     {
         "name": "Greedo",
-        "private_key": "7JYqLPNXhDmNB3ZvN3WdsoNAzDnqFj3EXCD2We1orVF",
-        "public_key": "BdzDrdxGqfxunc9PGEZ9PuszUyMBshew3yxVh6pStje3"
+        "private_key": "Cfma9Ld1PQdwZa6FEivF3qTXzPYgt9szdoqQkt2LYU4w",
+        "public_key": "7ChnLynMNpmbABKNAsyNbpLTja1bjf8hAfPrx3reyheF"
     },
     {
         "name": "Din Djarin",
-        "private_key": "HtbdjGLqZndwMcNY6np1BCnHXyr3M5qky5CuUPmdG9Jf",
-        "public_key": "E9jaGed26aypP5EhPdkFqu1c3mXxWBcsPrp4NkkqEK77"
+        "private_key": "YEwrCraRFbA8kVDfzygqXHyFhiFnMgiMGjuT9qpQyop",
+        "public_key": "Cc6iNacYmDpeYY7e9qModJhu2kDDhRoUttSaGL1q1nKv"
     }
 ]

@@ -110,6 +110,11 @@ def cargar_armas ():
 
     return sent_creation_tx
 
+def prueba ():
+    asset = bdb.assets.get(search='Sable de Luz')[0]
+    res = bdb.transactions.get(asset_id=asset["id"])
+    return res
+
 def get_assets (user,coins):
     lista = []
     #return bdb.assets.get(search='Galactic Coin')
@@ -122,10 +127,32 @@ def get_assets (user,coins):
             lista.append (i)
         elif i["transaction"]["metadata"] != None and coins == False:
             lista.append (i)
-    return res
+    return lista
 
 def get_user_weapons (user):
-    return get_assets (user,False)
+    user_list = get_assets (user,False)
+    result = []
+
+    for i in user_list:
+        if i["transaction"]["operation"] == 'CREATE':
+            data = i["transaction"]["asset"]
+            id = i["transaction"]["id"]
+        else:
+            data = bdb.transactions.get(asset_id=i["transaction"]["asset"]["id"], operation='CREATE')[0]["asset"]
+            id = i["transaction"]["asset"]["id"]
+        
+        amount = i["transaction"]["outputs"][i["output_index"]]["amount"]
+        asset = {"id":id,"data":data["data"],"amount":amount}
+
+        if asset not in result:
+            result.append (asset)
+        else:
+            for r in result:
+                if (r["id"] == asset["id"]):
+                    r["amount"] = r["amount"] + amount
+                    break
+            
+    return result
 
 def get_user_coins (user):
     coins = 0
@@ -210,3 +237,60 @@ def transfer_coins (user1,user2,coins):
         i += 1
 
     return "OK"
+
+def transfer_weapon (user1,user2,id_weapon):
+    transactions = get_assets (user1,False)
+
+    for i in transactions:
+        if (i["transaction"]["operation"] == 'CREATE' and i["transaction"]["id"] == id_weapon) or (i["transaction"]["operation"] == 'TRANSFER' and i["transaction"]["asset"]["id"] == id_weapon):
+            outputs = i["transaction"]["outputs"]
+            output = outputs [i["output_index"]]
+            amount = int(output["amount"])
+
+            transfer_input = {
+                    'fulfillment': output['condition']['details'],
+                    'fulfills': {
+                    'output_index': i ["output_index"],
+                    'transaction_id': i["transaction_id"],
+                },
+                    'owners_before': output['public_keys'],
+                }
+
+            if (i["transaction"]["operation"] == 'CREATE'):
+                transfer_asset = {
+                'id': i["transaction"]["id"],
+                }
+            else:
+                transfer_asset = {
+                'id': i["transaction"]["asset"]["id"],
+                }    
+
+            if amount == 1:
+                prepared_transfer_tx = bdb.transactions.prepare(
+                operation='TRANSFER',
+                asset=transfer_asset,
+                inputs=transfer_input,
+                metadata={"type":"weapon"},
+                recipients=[([user2.public_key], amount)]
+                )
+
+                fulfilled_transfer_tx = bdb.transactions.fulfill(prepared_transfer_tx, private_keys=user1.private_key)
+
+                return bdb.transactions.send_commit(fulfilled_transfer_tx)
+
+            else:
+                prepared_transfer_tx = bdb.transactions.prepare(
+                operation='TRANSFER',
+                asset=transfer_asset,
+                inputs=transfer_input,
+                metadata={"type":"weapon"},
+                recipients=[([user2.public_key], 1),([user1.public_key], amount - 1)]
+                )
+
+                fulfilled_transfer_tx = bdb.transactions.fulfill(prepared_transfer_tx, private_keys=user1.private_key)
+
+                return bdb.transactions.send_commit(fulfilled_transfer_tx)
+
+    raise Exception ("transaction not complete")
+
+    

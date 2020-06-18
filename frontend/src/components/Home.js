@@ -5,10 +5,9 @@ import {withRouter} from "react-router-dom";
 
 const Home = ({user,history}) => {
 
-    const [weapons,setWeapons] = useState ([{name:'Sable de luz',cost:6},{name:'Blaster',cost:4}]);
+    const [weapons,setWeapons] = useState ([]);
     const [loading,setLoading] = useState (false);
 
-    /*
     useEffect (()=>{
         setLoading (true);
         list_weapons()
@@ -21,34 +20,33 @@ const Home = ({user,history}) => {
             alertError ();
         })
     },[])
-    */
 
     const buyWeapon = (weapon,cost) => {
         alertConfirm ()
         .then (res=>{
             if (res.value){
-                let user_coins;
                 get_user_coins (user)
-                .then (res=>{
-                    user_coins = res.coins;
+                .then (res=>{           
+                    if (res.coins >= cost){
+                        buy_weapon (weapon,user,cost)
+                        .then (res=>{
+                            alertSuccess ()
+                            .then (()=>{
+                                history.push ('/assets')
+                            })
+                        })
+                        .catch (err=>{
+                            alertError();
+                            return;
+                        })
+                    }else{
+                        throw Error ("cost")
+                    }
                 })
                 .catch (err=>{
                     alertError ();
                     return;
                 })
-                if (user_coins >= cost){
-                    buy_weapon (weapon,user,user_coins-cost)
-                    .then (res=>{
-                        alertSuccess ()
-                        .then (()=>{
-                            history.push ('/assets')
-                        })
-                    })
-                    .catch (err=>{
-                        alertError();
-                        return;
-                    })
-                }
             }else{
                 return;
             }
@@ -57,7 +55,13 @@ const Home = ({user,history}) => {
     }
 
     return (
-        <WeaponList list={weapons} shop={true} user = {user} buyWeapon = {buyWeapon} />
+        <div>
+            {(loading)?
+            <h2>Cargando...</h2>
+            :
+            <WeaponList list={weapons} shop={true} user = {user} buyWeapon = {buyWeapon} />
+            }       
+        </div>
     );
 };
 
